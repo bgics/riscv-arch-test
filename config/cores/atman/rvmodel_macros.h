@@ -3,6 +3,22 @@
 
 #define RVMODEL_DATA_SECTION
 
+/* Enable ACT4's standard M-mode exception environment. */
+#define STANDARD_SM_SUPPORTED
+
+/* Use the standard M-mode trap setup without touching unimplemented HPM CSRs.
+ */
+#define RVMODEL_BOOT_TO_MMODE \
+  rvtest_boot_to_mmode:       \
+  csrw mie, zero;             \
+  csrw mip, zero;             \
+  csrw mepc, zero;            \
+  csrw mtval, zero;           \
+  csrw mcause, zero;          \
+  RVTEST_TRAP_PROLOG M;       \
+  li t0, MSTATUS_MPP;         \
+  csrw mstatus, t0;
+
 /* Fixed location in RAM that the testbench monitors for pass/fail.
  * Must lie inside the DUT's data memory and not collide with test data,
  * the stack, or the signature region. Top of the 16 MiB unified RAM. */
@@ -28,14 +44,14 @@
 #define RVMODEL_TIMER_INT_SOON_DELAY 100
 #define RVMODEL_MAX_CYCLES_PER_TIMER_TICK 1
 
-/* atman has no machine external/software interrupt mechanism to drive from
- * software; these exist only to satisfy check_defines.h. */
+/* ACT4 requires these names in every configuration. They are inert because
+ * this configuration excludes InterruptsSm and provides no interrupt source. */
 #define RVMODEL_SET_MEXT_INT(_R1, _R2)
 #define RVMODEL_CLR_MEXT_INT(_R1, _R2)
 #define RVMODEL_SET_MSW_INT(_R1, _R2)
 #define RVMODEL_CLR_MSW_INT(_R1, _R2)
 
-/* atman has no S-mode; these exist only to satisfy check_defines.h. */
+/* Required inert compatibility stubs; S-mode is not implemented. */
 #define RVMODEL_SET_SEXT_INT(_R1, _R2)
 #define RVMODEL_CLR_SEXT_INT(_R1, _R2)
 #define RVMODEL_SET_SSW_INT(_R1, _R2)

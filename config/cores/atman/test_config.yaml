@@ -1,11 +1,3 @@
-# ACT4 framework configuration for the atman processor.
-# SPDX-License-Identifier: Apache-2.0
-#
-# atman is an RV32I_Zicsr_Zifencei machine-mode-only core. It implements only a
-# subset of the mandatory Sm (machine-mode) CSRs, so STANDARD_SM_SUPPORTED is
-# deliberately left undefined in rvmodel_macros.h and privileged tests (which
-# require Sm/S/U trap-handler infrastructure such as mscratch and mtval) are
-# excluded via include_priv_tests.
 name: atman
 compiler_exe: riscv32-unknown-elf-gcc
 objdump_exe: riscv32-unknown-elf-objdump
@@ -13,4 +5,4 @@ ref_model_exe: sail_riscv_sim
 udb_config: atman.yaml
 linker_script: link.ld
 dut_include_dir: .
-include_priv_tests: False
+include_priv_tests: True

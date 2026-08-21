@@ -4,7 +4,7 @@ $schema: config_schema.json#
 kind: architecture configuration
 type: fully configured
 name: atman
-description: atman
+description: RV32I Atman core with Zicsr, Zifencei, and M-mode exceptions
 implemented_extensions:
   - { name: I, version: "= 2.1" }
   - { name: Zicsr, version: "= 2.0" }
@@ -16,7 +16,7 @@ params:
   MXLEN: 32
   PHYS_ADDR_WIDTH: 32
 
-  # MISA (not implemented in atman)
+  # MISA is implemented as a read-only zero CSR in the DUT.
   MISA_CSR_IMPLEMENTED: false
 
   # endianness
@@ -30,7 +30,8 @@ params:
   TRAP_ON_UNIMPLEMENTED_CSR: true
   TRAP_ON_ILLEGAL_WLRL: false
 
-  # MTVAL reporting (atman has no mtval CSR)
+  # MTVAL exists but is read-only zero; trap values are therefore reported as
+  # zero for all configured exception classes.
   REPORT_VA_IN_MTVAL_ON_BREAKPOINT: false
   REPORT_VA_IN_MTVAL_ON_LOAD_MISALIGNED: false
   REPORT_VA_IN_MTVAL_ON_STORE_AMO_MISALIGNED: false
@@ -41,11 +42,16 @@ params:
   REPORT_ENCODING_IN_MTVAL_ON_ILLEGAL_INSTRUCTION: false
   MTVAL_WIDTH: 32
 
-  # Misaligned load/store support (atman raises access faults, not supported)
+  # RV32 mstatush exists as read-only zero. mscratch exists as RW storage.
+
+  # Misaligned loads/stores raise access faults instead of address-misaligned
+  # exceptions. They are not supported atomically by the implementation.
   MISALIGNED_LDST: false
+  # Keep the ACT4 priority setting used for implementations that report
+  # misaligned accesses as access faults.
   MISALIGNED_LDST_EXCEPTION_PRIORITY: low
 
-  # CSR / implementation IDs (no read-only CSRs in atman)
+  # CSR / implementation IDs
   VENDOR_ID_BANK: 0
   VENDOR_ID_OFFSET: 0
   MARCHID_IMPLEMENTED: false
