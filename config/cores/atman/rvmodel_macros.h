@@ -40,16 +40,41 @@
 
 #define RVMODEL_IO_WRITE_STR(_R1, _R2, _R3, _STR_PTR)
 
-#define RVMODEL_INTERRUPT_LATENCY 1
-#define RVMODEL_TIMER_INT_SOON_DELAY 100
+/* CLINT timer registers. The DUT's CLINT decodes MTIMECMP at 0x02004000
+ * (lo) / 0x02004004 (hi) and MTIME at 0x0200BFF8 (lo) / 0x0200BFFC (hi).
+ * ACT4 generates the timer arm/clear sequences from these addresses; without
+ * them the framework assumes no timer is implemented and emits no code. */
+#define RVMODEL_MTIME_ADDRESS 0x0200BFF8
+#define RVMODEL_MTIMECMP_ADDRESS 0x02004000
+
+#define RVMODEL_INTERRUPT_LATENCY 2
+#define RVMODEL_TIMER_INT_SOON_DELAY 50
 #define RVMODEL_MAX_CYCLES_PER_TIMER_TICK 1
 
-/* ACT4 requires these names in every configuration. They are inert because
- * this configuration excludes InterruptsSm and provides no interrupt source. */
-#define RVMODEL_SET_MEXT_INT(_R1, _R2)
-#define RVMODEL_CLR_MEXT_INT(_R1, _R2)
-#define RVMODEL_SET_MSW_INT(_R1, _R2)
-#define RVMODEL_CLR_MSW_INT(_R1, _R2)
+/* Functional macros for software interrupts (CLINT MSIP at 0x02000000).
+ * Writing 1 to the MSIP address raises the software-interrupt pending
+ * bit for hart 0; writing 0 clears it. */
+#define RVMODEL_SET_MSW_INT(_R1, _R2) \
+  li _R1, 0x02000000;                 \
+  li _R2, 1;                          \
+  sw _R2, 0(_R1)
+
+#define RVMODEL_CLR_MSW_INT(_R1, _R2) \
+  li _R1, 0x02000000;                 \
+  sw zero, 0(_R1)
+
+/* Functional macros for external interrupts (SIG at 0x03000000).
+ * Write 0x80000800 to SIG+4 (0x03000004) sets MEIP (bit 11) on;
+ * write 0x00000800 clears it. */
+#define RVMODEL_SET_MEXT_INT(_R1, _R2) \
+  li _R1, 0x03000004;                  \
+  li _R2, 0x80000800;                  \
+  sw _R2, 0(_R1)
+
+#define RVMODEL_CLR_MEXT_INT(_R1, _R2) \
+  li _R1, 0x03000004;                  \
+  li _R2, 0x00000800;                  \
+  sw _R2, 0(_R1)
 
 /* Required inert compatibility stubs; S-mode is not implemented. */
 #define RVMODEL_SET_SEXT_INT(_R1, _R2)
