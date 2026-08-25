@@ -243,7 +243,7 @@
       "base": 50331648
     },
     "clock_frequency": 1000000000,
-    "instructions_per_tick": 2,
+    "instructions_per_tick": 1,
     "wfi_is_nop": true,
     "wfi_available_to_user_mode": false,
     "max_time_to_wait": 10
