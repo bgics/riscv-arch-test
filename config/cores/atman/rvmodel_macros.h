@@ -22,7 +22,7 @@
 /* Fixed location in RAM that the testbench monitors for pass/fail.
  * Must lie inside the DUT's data memory and not collide with test data,
  * the stack, or the signature region. Top of the 16 MiB unified RAM. */
-#define RVMODEL_HALT_ADDRESS 0x0FFFFF0
+#define RVMODEL_HALT_ADDRESS 0x04000000
 #define RVMODEL_HALT_PASS_VALUE 1
 #define RVMODEL_HALT_FAIL_VALUE 3
 
