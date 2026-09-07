@@ -1,6 +1,7 @@
 RAM_ORIGIN = 0x00000000;
 RAM_LENGTH = 0x00040000;
-TEST_BASE = 0x00000000;
+VECTOR_SIZE = 0x80;
+TEST_BASE   = RAM_ORIGIN + VECTOR_SIZE;
 NUM_HARTS = 1;
 
 STACK_SIZE = 0x2000;
@@ -19,6 +20,12 @@ PROVIDE(__num_harts = NUM_HARTS);
 SECTIONS
 {
   ASSERT(TEST_BASE >= ORIGIN(ram) && TEST_BASE < ORIGIN(ram) + LENGTH(ram), "TEST_BASE is outside RAM; update TEST_BASE and RAM_ORIGIN/RAM_LENGTH in link.ld, and the matching memory.regions entry in sail.json")
+
+  .vectors RAM_ORIGIN : {
+    KEEP(*(.vectors))
+    . = VECTOR_SIZE - 4;
+    LONG(0)
+  } > ram
 
   .text.init   TEST_BASE : { *(.text.init) } > ram
   .text.rvtest . : { *(.text.rvtest) *(.text.rvtest.*) } > ram
