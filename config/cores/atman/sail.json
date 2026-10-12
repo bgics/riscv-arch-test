@@ -271,9 +271,9 @@
     },
     "clock_frequency": 1000000000,
     "instructions_per_tick": 1,
-    "wfi_is_nop": true,
+    "wfi_is_nop": false,
     "wfi_available_to_user_mode": false,
-    "max_time_to_wait": 10
+    "max_time_to_wait": 1000
   },
   "extensions": {
     "M": {
@@ -355,7 +355,7 @@
       "supported": false
     },
     "Zicntr": {
-      "supported": false
+      "supported": true
     },
     "Zicsr": {
       "supported": true
